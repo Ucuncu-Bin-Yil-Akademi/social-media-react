@@ -6,18 +6,15 @@ import RightSidebar from "@/components/RightSidebar";
 export default function Home() {
   return (
     <>
-      <div>
-        <Header />
-      </div>
-
+      <Header />
       <div className="flex p-12 gap-20">
-        <div className="w-1/4">
+        <div className="w-1/5">
           <LeftSidebar />
         </div>
-        <div className="w-2/4">
+        <div className="w-3/5">
           <ContentArea />
         </div>
-        <div className="w-1/4">
+        <div className="w-1/5">
           <RightSidebar />
         </div>
       </div>
