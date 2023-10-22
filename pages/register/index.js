@@ -1,16 +1,20 @@
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
 import { useState } from "react";
+import axios from "axios";
 
 export default function RegisterPage() {
   /*   
-const [name, setName] = useState("");
+  const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState(""); 
 */
+
+  const [termsCheck, setTermsCheck] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -20,6 +24,33 @@ const [name, setName] = useState("");
     password: "",
     password2: "",
   });
+
+  const handleOnChange = (event) => {
+    setForm({ ...form, [event.target.name]: event.target.value });
+  };
+
+  const createAccountService = async () => {
+    const requestBody = {
+      name: form.name,
+      lastname: form.surname,
+      username: form.username,
+      email: form.email,
+      password: form.password,
+    };
+
+    axios.post("http://localhost:3000/auth/register", requestBody);
+  };
+
+  const handleSubmit = async () => {
+    if (termsCheck === false) {
+      alert("You must accept the terms of use and privacy policy.");
+    } else if (form.password !== form.password2) {
+      alert("Your passwords doesn't match.");
+    } else {
+      await createAccountService();
+      alert("İşlem tamamlandı");
+    }
+  };
 
   return (
     <div className="bg-orange-200 h-screen flex justify-center items-center">
@@ -31,31 +62,29 @@ const [name, setName] = useState("");
           Let's create your account and be socialized!
         </p>
         <div className="flex flex-col justify-center gap-5 mt-10">
+          {/* 
+          BU KOMUT OBJELERI DÜZ STRING HALINDE GÖSTERİR
+          {JSON.stringify()} 
+          */}
           <div className="flex gap-5">
             <TextField
               id="outlined-basic"
               label="Name"
               value={form.name}
-              onChange={(event) =>
-                setForm({ ...form, name: event.target.value })
-              }
+              name="name"
+              onChange={(event) => handleOnChange(event)}
               type="text"
               variant="outlined"
               sx={{
                 width: "100%",
               }}
             />
-
             <TextField
               id="outlined-basic"
               label="Surname"
+              name="surname"
               value={form.surname}
-              onChange={(event) =>
-                setForm({ ...form, surname: event.target.value })
-              }
-              // let form = {name: "John", surname: "Doe", age: 25};
-              // form = { ...form, name: "Steve" };
-
+              onChange={(event) => handleOnChange(event)}
               type="text"
               variant="outlined"
               sx={{
@@ -63,14 +92,12 @@ const [name, setName] = useState("");
               }}
             />
           </div>
-
           <div className="flex gap-5">
             <TextField
               id="outlined-basic"
+              name="username"
               value={form.username}
-              onChange={(event) =>
-                setForm({ ...form, username: event.target.value })
-              }
+              onChange={(event) => handleOnChange(event)}
               label="Enter your username"
               type="text"
               variant="outlined"
@@ -81,9 +108,8 @@ const [name, setName] = useState("");
             <TextField
               id="outlined-basic"
               value={form.email}
-              onChange={(event) =>
-                setForm({ ...form, email: event.target.value })
-              }
+              name="email"
+              onChange={(event) => handleOnChange(event)}
               label="Enter your e-mail"
               type="email"
               variant="outlined"
@@ -92,15 +118,13 @@ const [name, setName] = useState("");
               }}
             />
           </div>
-
           <TextField
             id="outlined-basic"
             label="Enter your password"
             type="password"
+            name="password"
             value={form.password}
-            onChange={(event) =>
-              setForm({ ...form, password: event.target.value })
-            }
+            onChange={(event) => handleOnChange(event)}
             variant="outlined"
             sx={{
               width: "100%",
@@ -111,18 +135,27 @@ const [name, setName] = useState("");
             label="Re-type your password"
             type="password"
             variant="outlined"
+            name="password2"
             value={form.password2}
-            onChange={(event) =>
-              setForm({ ...form, password2: event.target.value })
-            }
+            onChange={(event) => handleOnChange(event)}
             sx={{
               width: "100%",
             }}
           />
-
+          <div className="flex items-center">
+            <Checkbox
+              checked={termsCheck}
+              onChange={() => {
+                setTermsCheck(!termsCheck);
+              }}
+            />
+            <span>I accept the Privacy Policy and Terms of Use.</span>
+          </div>
           <Button
             variant="contained"
+            disabled={termsCheck === false}
             className="bg-gray-800 py-3 text-lg mt-10"
+            onClick={() => handleSubmit()}
             sx={{
               "&:hover": {
                 backgroundColor: "#2A3442",
