@@ -1,7 +1,7 @@
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function RegisterPage() {
@@ -15,6 +15,17 @@ export default function RegisterPage() {
 */
 
   const [termsCheck, setTermsCheck] = useState(false);
+  const [userToken, setUserToken] = useState("");
+  // let termsCheck = false;
+  // termsCheck = true;   --> setTermsCheck(true);
+
+  useEffect(() => {
+    let userToken = localStorage.getItem("user_token");
+
+    if (userToken) {
+      window.location.href = "/";
+    }
+  }, []);
 
   const [form, setForm] = useState({
     name: "",
@@ -38,7 +49,24 @@ export default function RegisterPage() {
       password: form.password,
     };
 
-    axios.post("http://localhost:3000/auth/register", requestBody);
+    /*
+    const response = await fetch("http://localhost:3000/auth/register", {
+          method: "POST",
+          body: JSON.stringify(requestBody),
+    })
+    */
+
+    const response = await axios.post(
+      "http://localhost:3000/auth/register",
+      requestBody
+    );
+
+    if (response.status === 200) {
+      setUserToken(response.data.token);
+      localStorage.setItem("user_token", response.data.token);
+    } else {
+      alert("An error occured while creating your account.");
+    }
   };
 
   const handleSubmit = async () => {
@@ -48,7 +76,6 @@ export default function RegisterPage() {
       alert("Your passwords doesn't match.");
     } else {
       await createAccountService();
-      alert("İşlem tamamlandı");
     }
   };
 

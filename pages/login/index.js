@@ -1,7 +1,16 @@
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { useEffect } from "react";
 
 export default function LoginPage() {
+  useEffect(() => {
+    let userToken = localStorage.getItem("user_token");
+
+    if (userToken) {
+      window.location.href = "/";
+    }
+  }, []);
+
   return (
     <div className="bg-orange-200 h-screen flex justify-center items-center">
       <div className="bg-white w-1/2 p-5 rounded-lg">
