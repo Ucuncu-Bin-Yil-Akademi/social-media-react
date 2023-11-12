@@ -2,14 +2,44 @@ import ControlPointOutlinedIcon from "@mui/icons-material/ControlPointOutlined";
 import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
 import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
+import { useState } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+
 
 export default function PublishArea() {
+
+  const [inputValue, setInputValue] = useState("");
+  const dispatch = useDispatch();
+
+  const publishPost = () => {
+    const requestBody = {
+      content: inputValue
+    }
+
+    axios.post('http://localhost:3000/publications/publish', requestBody, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('user_token')}`
+      }
+    }).then((response) => {
+        if(response.status === 200){
+          setInputValue("");
+          dispatch({
+            type: 'REFETCH_CONTENT',
+            payload: true
+          })
+        }
+    })
+  }
+
   return (
     <>
       <div className="border-2 rounded-lg">
         <div className="p-3">
           <input
             type="text"
+            value={inputValue}
+            onChange={(event) => setInputValue(event.target.value)}
             placeholder="What are you publish?"
             className="w-full py-3 px-2"
           />
@@ -47,7 +77,7 @@ export default function PublishArea() {
             <button className="border-2 px-4 py-1 rounded-full mr-3">
               Draft
             </button>
-            <button className="bg-rose-500 px-4 py-1 rounded-full text-white">
+            <button className="bg-rose-500 px-4 py-1 rounded-full text-white" onClick={() => publishPost()}>
               Post Now
             </button>
           </div>

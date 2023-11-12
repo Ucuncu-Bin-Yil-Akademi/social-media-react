@@ -3,8 +3,13 @@ import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function RegisterPage() {
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+
   /*   
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
@@ -15,16 +20,21 @@ export default function RegisterPage() {
 */
 
   const [termsCheck, setTermsCheck] = useState(false);
-  const [userToken, setUserToken] = useState("");
   // let termsCheck = false;
   // termsCheck = true;   --> setTermsCheck(true);
 
   useEffect(() => {
-    let userToken = localStorage.getItem("user_token");
+      let userToken = localStorage.getItem("user_token");
 
-    if (userToken) {
-      window.location.href = "/";
-    }
+      if (userToken) {
+        window.location.href = "/";
+      }
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+      
+  
   }, []);
 
   const [form, setForm] = useState({
@@ -62,8 +72,17 @@ export default function RegisterPage() {
     );
 
     if (response.status === 200) {
-      setUserToken(response.data.token);
+      const { username, name, lastname } = response.data.user;
       localStorage.setItem("user_token", response.data.token);
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          name,
+          lastname,
+          username,
+        },
+      });
+      window.location.href = "/";
     } else {
       alert("An error occured while creating your account.");
     }
@@ -80,7 +99,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="bg-orange-200 h-screen flex justify-center items-center">
+
+    <>
+      {
+        loading === true ? (
+          <>
+            <div className="flex justify-center items-center h-screen">
+              <CircularProgress />
+            </div>
+          </>
+        ) : (    <div className="bg-orange-200 h-screen flex justify-center items-center">
       <div className="bg-white w-1/2 p-5 rounded-lg">
         <h2 className="text-center text-2xl font-semibold text-gray-500">
           Create a new account
@@ -193,6 +221,8 @@ export default function RegisterPage() {
           </Button>
         </div>
       </div>
-    </div>
+    </div>)
+      }
+    </>
   );
 }

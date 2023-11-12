@@ -1,51 +1,78 @@
 import PublishArea from "./ContentAreaComponents/PublishArea";
 import PostCard from "./ContentAreaComponents/PostCard";
-
-const contentData = [
-  {
-    username: "canberkberen",
-    userFullName: "Canberk Beren",
-    createdOn: "1 Hour ago",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    avatar: "https://mui.com/static/images/avatar/1.jpg",
-    likeCount: "1.8K",
-    commentCount: "1.1K",
-  },
-  {
-    username: "john_stim",
-    userFullName: "Johanes Stim",
-    createdOn: "3 Hours ago",
-    content: "Nullam rutrum purus odio, et ullamcorper lectus dapibus cursus.",
-    avatar: "https://mui.com/static/images/avatar/2.jpg",
-    likeCount: "700",
-    commentCount: "325",
-  },
-  {
-    username: "ahmetyilmz1",
-    userFullName: "Ahmet Yılmaz",
-    createdOn: "1 Day ago",
-    content:
-      "Morbi a semper tellus. Sed nisi nisl, efficitur vel dapibus a, rhoncus eget nibh. ",
-    avatar: "https://mui.com/static/images/avatar/3.jpg",
-    likeCount: "1.2K",
-    commentCount: "1.1K",
-  },
-];
+import { useState, useEffect } from "react";
+import axios from "axios";
+import {dateFormatter} from '@/utils/dateFormatter';
+import { useSelector, useDispatch } from "react-redux";
 
 export default function ContentArea() {
+
+  const [contentData, setContentData] = useState([]);
+  const dispatch = useDispatch();
+  const contentPing = useSelector((state) => state.contentPing.renew)
+
+  useEffect(() => {
+    const getContents = async () => {
+      try{
+       const response = await axios.get('http://localhost:3000/publications/', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('user_token')}`
+        }
+       })
+
+       if(response.status === 200){
+          setContentData(response.data.publications);
+          dispatch({
+            type: 'REFETCH_CONTENT',
+            payload: false
+          })
+       }
+      }
+      catch(error){
+        console.log(error);
+      }
+    }
+
+    if(contentPing){
+      getContents();
+    }
+  }, [contentPing]);
+
+
+  useEffect(() => {
+    const getContents = async () => {
+      try{
+       const response = await axios.get('http://localhost:3000/publications/', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('user_token')}`
+        }
+       })
+
+       if(response.status === 200){
+          setContentData(response.data.publications);
+       }
+      }
+      catch(error){
+        console.log(error);
+      }
+    }
+
+    getContents();
+  }, []);
+
   return (
     <div>
       <PublishArea />
-      {contentData.map((content) => {
+      {contentData?.map((content) => {
         return (
           <PostCard
-            avatar={content.avatar}
-            fullname={content.userFullName}
-            username={content.username}
-            createdOn={content.createdOn}
+            avatar='C'
+            fullname={content.user[0].name + ' ' + content.user[0].lastname}
+            username={content.user[0].username}
+            createdOn={dateFormatter(content.createdAt)}
             content={content.content}
-            likeCount={content.likeCount}
-            commentCount={content.commentCount}
+            likeCount={content.likes.lenth || 0}
+            commentCount={0}
           />
         );
       })}

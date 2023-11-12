@@ -8,9 +8,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 export default function LoginPage() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const [password, setPassword] = useState("");
   const [form, setForm] = useState({
     email: "",
     password: "",
+    test: '',
+    test2: ''
   });
 
   useEffect(() => {
@@ -22,7 +25,7 @@ export default function LoginPage() {
 
       setTimeout(() => {
         setLoading(false);
-      }, 2000);
+      }, 1000);
       
   
   }, []);
@@ -64,6 +67,7 @@ export default function LoginPage() {
         },
       });
       localStorage.setItem("user_token", response.data.token);
+      window.location.href = "/";
     }
   };
 
@@ -92,7 +96,7 @@ export default function LoginPage() {
             type="email"
             value={form.email}
             onChange={(event) =>
-              setForm({ ...form, email: event.target.value })
+              setForm({ ...form, email: event.target.value})
             }
             variant="outlined"
             sx={{
