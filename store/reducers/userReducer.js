@@ -3,6 +3,7 @@ const initialState =  {
         name: "",
         lastname: "",
         username: "",
+        _id: "",
     },
 }
 

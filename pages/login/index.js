@@ -57,13 +57,14 @@ export default function LoginPage() {
       }) 
       */
 
-      const { username, name, lastname } = response.data;
+      const { username, name, lastname, _id} = response.data;
       dispatch({
         type: "LOGIN",
         payload: {
           name,
           lastname,
           username,
+          _id
         },
       });
       localStorage.setItem("user_token", response.data.token);
