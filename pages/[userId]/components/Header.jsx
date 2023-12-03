@@ -1,4 +1,24 @@
-export default function Header() {
+import axios from "axios";
+
+export default function Header({ userData, currentUser, getUserData }) {
+  const followUser = async () => {
+    const followApi = "http://localhost:3000/users/follow/" + userData._id;
+
+    const response = await axios.post(
+      followApi,
+      {},
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("user_token"),
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      getUserData();
+    }
+  };
+
   return (
     <>
       <div className="">
@@ -19,14 +39,30 @@ export default function Header() {
           <div className="flex justify-around items-center w-full p-10 pl-32">
             <div>
               <h2 className="text-3xl text-purple-700 font-bold">
-                Charles Doe
+                @{userData.username}
               </h2>
               <h4 className="text-purple-700">UI/UX Designer</h4>
             </div>
             <div>
-              <button className="bg-purple-700 text-white px-5 py-3 rounded-full">
-                Follow
-              </button>
+              {userData.userFollowers.includes(currentUser._id) ? (
+                <button
+                  className="bg-gray-500 text-white px-5 py-3 rounded-full"
+                  onClick={() => {
+                    followUser();
+                  }}
+                >
+                  Unfollow
+                </button>
+              ) : (
+                <button
+                  className="bg-purple-700 text-white px-5 py-3 rounded-full"
+                  onClick={() => {
+                    followUser();
+                  }}
+                >
+                  Follow
+                </button>
+              )}
             </div>
           </div>
         </div>

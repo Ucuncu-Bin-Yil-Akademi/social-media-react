@@ -16,7 +16,7 @@ export default function HeaderMobile() {
 
   return (
     <header className="flex justify-between items-center px-3 py-6 border-b-2 border-gray-200">
-      <Image src={Logo} height={45} />
+      <Image alt="logo" src={Logo} height={45} />
 
       <div className="flex items-center gap-3">
         <MenuIcon sx={{ fontSize: 28 }} onClick={() => setIsDrawerOpen(true)} />
@@ -26,7 +26,12 @@ export default function HeaderMobile() {
         <div className="fixed z-50 top-0 left-0 bg-gray-200 w-full h-full p-6">
           <div className="flex justify-between items-center w-full">
             <h1>User Menu</h1>
-            <span className="bg-gray-300 p-3 rounded" onClick={() => setIsDrawerOpen(false)}>X</span>
+            <span
+              className="bg-gray-300 p-3 rounded"
+              onClick={() => setIsDrawerOpen(false)}
+            >
+              X
+            </span>
           </div>
         </div>
       )}
