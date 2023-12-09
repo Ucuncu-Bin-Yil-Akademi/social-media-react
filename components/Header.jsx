@@ -8,14 +8,27 @@ import { deepPurple } from "@mui/material/colors";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 export default function Header({ user }) {
+
+  const [search, setSearch] = useState("");
+  const dispatch = useDispatch();
+
   return (
     <header className="flex justify-between px-7 py-6 border-b-2 border-gray-200">
       <Image alt="logo" src={Logo} height={55} />
-
       <TextField
         id="outlined-basic"
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          dispatch({
+           type: "SET_SEARCH",
+           payload: e.target.value
+          })
+        }}
         placeholder="Search now..."
         sx={{
           width: "750px",

@@ -16,6 +16,7 @@ export default function PostCard({
   commentCount,
   likes,
   contentId,
+  image
 }) {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user);
@@ -64,6 +65,14 @@ export default function PostCard({
             <MoreVertIcon />
           </div>
         </div>
+
+        {
+          (image && image?.length > 0) && (
+            <div className="flex justify-center">
+              <img src={process.env.NEXT_PUBLIC_CDN_URL + image} alt="content" className="w-full rounded-lg" />
+            </div>
+          )
+        }
 
         <div>
           <p>{content}</p>

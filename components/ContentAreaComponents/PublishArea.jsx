@@ -6,31 +6,48 @@ import { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 
-
 export default function PublishArea() {
-
   const [inputValue, setInputValue] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
   const dispatch = useDispatch();
 
-  const publishPost = () => {
-    const requestBody = {
-      content: inputValue
-    }
+  const handleImageChange = (event) => {
+    if(!event) return setSelectedImage(null);
+    const file = event.target.files[0];
+    setSelectedImage(file);
+  };
 
-    axios.post('http://localhost:3000/publications/publish', requestBody, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('user_token')}`
-      }
-    }).then((response) => {
-        if(response.status === 200){
+  const publishPost = () => {
+    /*   
+
+  const requestBody = {
+      content: inputValue,
+      image: selectedImage
+    } 
+    
+  */
+
+    const formData = new FormData();
+    formData.append("content", inputValue);
+    formData.append("image", selectedImage);
+
+    axios
+      .post("http://localhost:3000/publications/publish", formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user_token")}`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
           setInputValue("");
+          handleImageChange(null);
           dispatch({
-            type: 'REFETCH_CONTENT',
-            payload: true
-          })
+            type: "REFETCH_CONTENT",
+            payload: true,
+          });
         }
-    })
-  }
+      });
+  };
 
   return (
     <>
@@ -47,18 +64,26 @@ export default function PublishArea() {
 
         <div className="flex md:flex-row flex-col md:gap-0 gap-5 justify-between p-3 items-center border-t-2">
           <div className="flex gap-5">
-            <ControlPointOutlinedIcon
-              style={{
-                color: "#B0B0B0",
-                fontSize: "1.7rem",
+            <label htmlFor="image-input">
+              <PhotoOutlinedIcon
+                style={{
+                  color: "#B0B0B0",
+                  fontSize: "1.7rem",
+                  cursor: "pointer",
+                }}
+              />
+            </label>
+
+            <input
+              type="file"
+              id="image-input"
+              accept="image/*"
+              onChange={(event) => {
+                handleImageChange(event);
               }}
+              style={{ display: "none" }}
             />
-            <PhotoOutlinedIcon
-              style={{
-                color: "#B0B0B0",
-                fontSize: "1.7rem",
-              }}
-            />
+
             <VideocamOutlinedIcon
               style={{
                 color: "#B0B0B0",
@@ -71,13 +96,25 @@ export default function PublishArea() {
                 fontSize: "1.7rem",
               }}
             />
+
+            <span className="text-gray-800 italic">
+              {selectedImage && selectedImage?.name}
+            </span>
+            {selectedImage && <button className="text-rose-500"
+            onClick={() => {
+              handleImageChange(null);
+            }}
+            >X</button>}
           </div>
 
           <div>
             <button className="border-2 px-4 py-1 rounded-full mr-3">
               Draft
             </button>
-            <button className="bg-rose-500 px-4 py-1 rounded-full text-white" onClick={() => publishPost()}>
+            <button
+              className="bg-rose-500 px-4 py-1 rounded-full text-white"
+              onClick={() => publishPost()}
+            >
               Post Now
             </button>
           </div>
