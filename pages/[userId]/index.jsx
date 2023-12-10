@@ -148,9 +148,13 @@ export default function UserPage() {
                   />
                 )}
 
-                {value === "followers" && <UserFollowers />}
+                {value === "followers" && (
+                  <UserFollowers followers={user.userFollowers} />
+                )}
 
-                {value === "following" && <UserFollowing />}
+                {value === "following" && (
+                  <UserFollowing following={user.following} />
+                )}
               </div>
             </div>
           </div>

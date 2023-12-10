@@ -1,6 +1,10 @@
 import axios from "axios";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useRouter } from "next/router";
+import Cookie from "js-cookie";
 
 export default function Header({ userData, currentUser, getUserData }) {
+  const router = useRouter();
   const followUser = async () => {
     const followApi = "http://localhost:3000/users/follow/" + userData._id;
 
@@ -9,7 +13,7 @@ export default function Header({ userData, currentUser, getUserData }) {
       {},
       {
         headers: {
-          Authorization: "Bearer " + localStorage.getItem("user_token"),
+          Authorization: "Bearer " + Cookie.get("user_token"),
         },
       }
     );
@@ -23,6 +27,16 @@ export default function Header({ userData, currentUser, getUserData }) {
     <>
       <div className="">
         <div className="relative">
+          <button
+            onClick={() => {
+              router.push("/");
+            }}
+            className="absolute px-3 py-2 bg-purple-700 m-5 rounded-full border border-gray-500 flex items-center gap-3"
+          >
+            <ArrowBackIcon />
+            <span>Back to Home</span>
+          </button>
+
           <img
             src="https://picsum.photos/1200/250"
             className="rounded-b-xl w-full"
@@ -44,7 +58,9 @@ export default function Header({ userData, currentUser, getUserData }) {
               <h4 className="text-purple-700">UI/UX Designer</h4>
             </div>
             <div>
-              {userData.userFollowers.includes(currentUser._id) ? (
+              {userData.userFollowers.filter(
+                (user) => user.username === currentUser.username
+              )?.length > 0 ? (
                 <button
                   className="bg-gray-500 text-white px-5 py-3 rounded-full"
                   onClick={() => {
@@ -55,7 +71,12 @@ export default function Header({ userData, currentUser, getUserData }) {
                 </button>
               ) : (
                 <button
-                  className="bg-purple-700 text-white px-5 py-3 rounded-full"
+                  className={`text-white px-5 py-3 rounded-full ${
+                    userData.username === currentUser.username
+                      ? "bg-gray-300"
+                      : "bg-purple-700"
+                  }`}
+                  disabled={currentUser.username === userData.username}
                   onClick={() => {
                     followUser();
                   }}

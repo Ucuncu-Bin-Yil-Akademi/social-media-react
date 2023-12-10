@@ -2,15 +2,18 @@ import Avatar from "@mui/material/Avatar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import Cookie from "js-cookie";
+import { useRouter } from "next/router";
 
 export default function PopularProfileCard() {
   const currentUser = useSelector((state) => state.user);
   const [userData, setUserData] = useState([]);
+  const router = useRouter();
 
   const getUserData = async () => {
     const response = await axios.get("http://localhost:3000/users/", {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("user_token")}`,
+        Authorization: `Bearer ${Cookie.get("user_token")}`,
       },
     });
 
@@ -30,7 +33,7 @@ export default function PopularProfileCard() {
       {},
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("user_token")}`,
+          Authorization: `Bearer ${Cookie.get("user_token")}`,
         },
       }
     );
@@ -49,7 +52,12 @@ export default function PopularProfileCard() {
               <div className="flex items-center gap-3">
                 <Avatar alt="Remy Sharp" src={user.avatar} />
                 <div>
-                  <span className="text-sm font-semibold">
+                  <span
+                    className="text-sm font-semibold cursor-pointer"
+                    onClick={() => {
+                      router.push("/" + user.username);
+                    }}
+                  >
                     @{user.username}
                   </span>
                   <div className="flex gap-1 text-gray-400">

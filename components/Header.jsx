@@ -10,9 +10,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import Link from "next/link";
 
 export default function Header({ user }) {
-
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
 
@@ -25,9 +25,9 @@ export default function Header({ user }) {
         onChange={(e) => {
           setSearch(e.target.value);
           dispatch({
-           type: "SET_SEARCH",
-           payload: e.target.value
-          })
+            type: "SET_SEARCH",
+            payload: e.target.value,
+          });
         }}
         placeholder="Search now..."
         sx={{
@@ -65,13 +65,20 @@ export default function Header({ user }) {
             borderRadius: "50%",
           }}
         />
-        <span className="text-xl font-bold ml-7">
-          {user?.user?.name + " " + user?.user?.lastname}
-        </span>
-        <Avatar sx={{ bgcolor: deepPurple[500] }}>
-          {user?.user?.name[0]}
-          {user?.user?.lastname[0]}
-        </Avatar>
+
+        <Link
+          href={`/${user?.user?.username}`}
+          className="flex items-center gap-2"
+        >
+          <span className="text-xl font-bold ml-7">
+            {user?.user?.name + " " + user?.user?.lastname}
+          </span>
+          <Avatar sx={{ bgcolor: deepPurple[500] }}>
+            {user?.user?.name[0]}
+            {user?.user?.lastname[0]}
+          </Avatar>
+        </Link>
+
         <ExpandMoreIcon sx={{ fontSize: 28 }} />
       </div>
     </header>

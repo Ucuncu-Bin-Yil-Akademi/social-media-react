@@ -6,6 +6,8 @@ import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import Cookie from "js-cookie";
+import { useRouter } from "next/router";
 
 export default function PostCard({
   avatar,
@@ -16,9 +18,11 @@ export default function PostCard({
   commentCount,
   likes,
   contentId,
-  image
+  image,
+  embedVideo,
 }) {
   const dispatch = useDispatch();
+  const router = useRouter();
   const currentUser = useSelector((state) => state.user);
 
   const likeContent = async (contentId) => {
@@ -31,7 +35,7 @@ export default function PostCard({
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("user_token")}`,
+            Authorization: `Bearer ${Cookie.get("user_token")}`,
           },
         }
       )
@@ -52,9 +56,23 @@ export default function PostCard({
           <div className="flex items-center gap-3">
             <Avatar alt="Remy Sharp" src={avatar} />
             <div>
-              <span className="text-lg font-semibold">{fullname}</span>
+              <span
+                className="text-lg font-semibold cursor-pointer"
+                onClick={() => {
+                  router.push("/" + username);
+                }}
+              >
+                {fullname}
+              </span>
               <div className="flex gap-1 text-gray-400">
-                <span>@{username}</span>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => {
+                    router.push("/" + username);
+                  }}
+                >
+                  @{username}
+                </span>
                 <span>•</span>
                 <span>{createdOn}</span>
               </div>
@@ -66,13 +84,28 @@ export default function PostCard({
           </div>
         </div>
 
-        {
-          (image && image?.length > 0) && (
-            <div className="flex justify-center">
-              <img src={process.env.NEXT_PUBLIC_CDN_URL + image} alt="content" className="w-full rounded-lg" />
-            </div>
-          )
-        }
+        {image && image?.length > 0 && (
+          <div className="flex justify-center">
+            <img
+              src={process.env.NEXT_PUBLIC_CDN_URL + image}
+              alt="content"
+              className="w-full rounded-lg"
+            />
+          </div>
+        )}
+
+        {embedVideo && (
+          <iframe
+            width="966"
+            height="543"
+            className="rounded-lg"
+            src={"https://www.youtube.com/embed/" + embedVideo}
+            title="KALT&#39;ın Podcast&#39;i - Sizin İçin Size Rağmen"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        )}
 
         <div>
           <p>{content}</p>

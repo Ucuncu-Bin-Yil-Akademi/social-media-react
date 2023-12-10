@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 //import Pagination from '@mui/material/Pagination';
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useRef } from "react";
+import Cookie from "js-cookie";
 
 export default function ContentArea() {
   const [contentData, setContentData] = useState([]);
@@ -17,28 +18,32 @@ export default function ContentArea() {
   const [totalPageCount, setTotalPageCount] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const refElm = useRef(null)
+  const refElm = useRef(null);
 
   const getMoreContent = async () => {
-    try{
-      const response = await axios.get(`http://localhost:3000/publications?search=${searchValue}&page=${currentPage + 1}`,{
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("user_token")}`,
-        },
-      })
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/publications?search=${searchValue}&page=${
+          currentPage + 1
+        }`,
+        {
+          headers: {
+            Authorization: `Bearer ${Cookie.get("user_token")}`,
+          },
+        }
+      );
 
-      if(response.status === 200){
+      if (response.status === 200) {
         setContentData((prevData) => [
           ...prevData,
           ...response.data.publications,
-        ])
+        ]);
 
-        setCurrentPage((prevPage) => prevPage + 1)
-        setHasMore(currentPage < totalPageCount)
+        setCurrentPage((prevPage) => prevPage + 1);
+        setHasMore(currentPage < totalPageCount);
       }
-    }
-    catch(e){
-      setHasMore(false)
+    } catch (e) {
+      setHasMore(false);
     }
   };
 
@@ -53,7 +58,7 @@ export default function ContentArea() {
           `http://localhost:3000/publications?search=${searchValue}&page=${currentPage}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("user_token")}`,
+              Authorization: `Bearer ${Cookie.get("user_token")}`,
             },
           }
         );
@@ -77,14 +82,13 @@ export default function ContentArea() {
     }
   }, [contentPing]);
 
-
   const handleClick = (e) => {
-    console.log("tıklandı")
-  }
+    console.log("tıklandı");
+  };
 
   useEffect(() => {
-    debugger
-    refElm.current.addEventListener('click', handleClick);
+    debugger;
+    refElm.current.addEventListener("click", handleClick);
   }, []);
 
   useEffect(() => {
@@ -94,7 +98,7 @@ export default function ContentArea() {
           `http://localhost:3000/publications?search=${searchValue}&page=${currentPage}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("user_token")}`,
+              Authorization: `Bearer ${Cookie.get("user_token")}`,
             },
           }
         );
@@ -116,16 +120,16 @@ export default function ContentArea() {
       <PublishArea />
 
       <InfiniteScroll
-      dataLength={contentData?.length}
-      next={() => getMoreContent()}
-      hasMore={hasMore}
-      loader={
-        hasMore && (
-          <div className="flex justify-center items-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-          </div>
-        )
-      }
+        dataLength={contentData?.length}
+        next={() => getMoreContent()}
+        hasMore={hasMore}
+        loader={
+          hasMore && (
+            <div className="flex justify-center items-center">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
+          )
+        }
       >
         {contentData?.map((content) => {
           return (
@@ -136,9 +140,10 @@ export default function ContentArea() {
               createdOn={dateFormatter(content.createdAt)}
               content={content.content}
               contentId={content.id}
-              likeCount={content.likes.lenth || 0}
+              likeCount={content?.likes?.length || 0}
               commentCount={0}
               image={content.images}
+              embedVideo={content.embedVideo}
               likes={content.likes}
             />
           );

@@ -1,5 +1,6 @@
 import CardDesign from "./RightSidebarComponents/CardDesign";
 import PopularProfileCard from "./RightSidebarComponents/popularProfileCard";
+import TrendingPosts from "./RightSidebarComponents/TrendingPosts";
 
 export default function RightSidebar() {
   return (
@@ -9,7 +10,7 @@ export default function RightSidebar() {
         cardComponent={<PopularProfileCard />}
       />
 
-      <CardDesign cardTitle="Trending Post" cardComponent="deneme" />
+      <CardDesign cardTitle="Trending Post" cardComponent={<TrendingPosts />} />
     </div>
   );
 }

@@ -30,7 +30,7 @@ export default function UserContent({
         },
         {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("user_token"),
+            Authorization: "Bearer " + Cookie.get("user_token"),
           },
         }
       )
@@ -73,7 +73,7 @@ export default function UserContent({
                 </Typography>
               </CardContent>
               <CardActions className="flex items-center gap-10 text-xl">
-                {content.likes.includes(currentUser._id) ? (
+                {content?.likes?.includes(currentUser._id) ? (
                   <button
                     className="text-red-500 flex items-center gap-3"
                     onClick={() => {
@@ -81,7 +81,7 @@ export default function UserContent({
                     }}
                   >
                     <FavoriteIcon />
-                    <span>{content.likes.length || 0}</span>
+                    <span>{content?.likes?.length || 0}</span>
                   </button>
                 ) : (
                   <button
@@ -91,7 +91,7 @@ export default function UserContent({
                     }}
                   >
                     <FavoriteBorderIcon />
-                    <span>{content.likes.length || 0}</span>
+                    <span>{content?.likes?.length || 0}</span>
                   </button>
                 )}
 
